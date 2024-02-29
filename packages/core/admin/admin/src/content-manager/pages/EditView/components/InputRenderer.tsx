@@ -12,6 +12,7 @@ import { useLazyComponents } from '../../../hooks/useLazyComponents';
 import { BlocksInput } from './FormInputs/BlocksInput/BlocksInput';
 import { ComponentInput } from './FormInputs/Component/Input';
 import { DynamicZone, useDynamicZone } from './FormInputs/DynamicZone/Field';
+import { RelationsInput } from './FormInputs/Relations';
 import { UIDInput } from './FormInputs/UID';
 import { Wysiwyg } from './FormInputs/Wysiwyg/Field';
 
@@ -115,6 +116,8 @@ const InputRenderer = ({
       return <ComponentInput {...props} hint={hint} disabled={fieldIsDisabled} />;
     case 'dynamiczone':
       return <DynamicZone {...props} hint={hint} disabled={fieldIsDisabled} />;
+    case 'relation':
+      return <RelationsInput {...props} hint={hint} disabled={fieldIsDisabled} />;
     case 'richtext':
       return <Wysiwyg {...props} hint={hint} type={props.type} disabled={fieldIsDisabled} />;
     case 'uid':
