@@ -15,14 +15,14 @@ export default ({ strapi }: Context) => {
      */
     buildResponseCollectionDefinition(contentType: Schema.ContentType) {
       const name = naming.getEntityResponseCollectionName(contentType);
-      const entityName = naming.getEntityName(contentType);
+      const typeName = naming.getTypeName(contentType);
 
       return objectType({
         name,
 
         definition(t) {
           t.nonNull.list.field('data', {
-            type: nonNull(entityName),
+            type: nonNull(typeName),
 
             resolve: pipe(prop('nodes'), defaultTo([])),
           });

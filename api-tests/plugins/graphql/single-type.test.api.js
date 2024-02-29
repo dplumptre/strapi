@@ -29,7 +29,7 @@ const updateContent = (data) => {
       mutation updateHomePage($data: HomePageInput!) {
         updateHomePage(data: $data) {
           data {
-            id
+            documentId
           }
         }
       }
@@ -66,7 +66,7 @@ describe('Single type Graphql support', () => {
           {
             homePages {
               data {
-                id
+                documentId
               }
             }
           }
@@ -93,29 +93,27 @@ describe('Single type Graphql support', () => {
           {
             homePage {
               data {
-                id
-                attributes {
-                  title
-                }
+                documentId
+                title
               }
             }
           }
         `,
       });
 
+      console.dir(res.body, { depth: null });
+
       expect(res.statusCode).toBe(200);
       expect(res.body.data).toEqual({
         homePage: {
           data: {
-            id: expect.anything(),
-            attributes: {
-              title: 'Test',
-            },
+            documentId: expect.any(String),
+            title: 'Test',
           },
         },
       });
 
-      data.id = res.body.data.homePage.data.id;
+      data.documentId = res.body.data.homePage.data.documentId;
     });
   });
 
@@ -125,7 +123,7 @@ describe('Single type Graphql support', () => {
         query: /* GraphQL */ `
           mutation {
             createHomePage(input: { data: { title: "Test" } }) {
-              id
+              documentId
             }
           }
         `,
@@ -147,10 +145,8 @@ describe('Single type Graphql support', () => {
           mutation updateHomePage($data: HomePageInput!) {
             updateHomePage(data: $data) {
               data {
-                id
-                attributes {
-                  title
-                }
+                documentId
+                title
               }
             }
           }
@@ -166,10 +162,8 @@ describe('Single type Graphql support', () => {
       expect(updateRes.body.data).toEqual({
         updateHomePage: {
           data: {
-            id: data.id,
-            attributes: {
-              title: 'New Title',
-            },
+            id: data.documentId,
+            title: 'New Title',
           },
         },
       });
@@ -179,10 +173,8 @@ describe('Single type Graphql support', () => {
           {
             homePage {
               data {
-                id
-                attributes {
-                  title
-                }
+                documentId
+                title
               }
             }
           }
@@ -193,10 +185,8 @@ describe('Single type Graphql support', () => {
       expect(getRes.body.data).toEqual({
         homePage: {
           data: {
-            id: data.id,
-            attributes: {
-              title: 'New Title',
-            },
+            documentId: data.documentId,
+            title: 'New Title',
           },
         },
       });
@@ -208,10 +198,8 @@ describe('Single type Graphql support', () => {
           mutation {
             deleteHomePage {
               data {
-                id
-                attributes {
-                  title
-                }
+                documentId
+                title
               }
             }
           }
@@ -222,10 +210,8 @@ describe('Single type Graphql support', () => {
       expect(deleteRes.body.data).toEqual({
         deleteHomePage: {
           data: {
-            id: data.id,
-            attributes: {
-              title: 'New Title',
-            },
+            documentId: data.documentId,
+            title: 'New Title',
           },
         },
       });
@@ -235,10 +221,8 @@ describe('Single type Graphql support', () => {
           {
             homePage {
               data {
-                id
-                attributes {
-                  title
-                }
+                documentId
+                title
               }
             }
           }

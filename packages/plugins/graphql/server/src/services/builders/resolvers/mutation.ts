@@ -5,6 +5,7 @@ import type { Context } from '../../types';
 
 const pickCreateArgs = pick(['params', 'data', 'files']);
 
+// TODO: use document service
 export default ({ strapi }: Context) => ({
   buildMutationsResolvers({ contentType }: { contentType: Schema.ContentType }) {
     const { uid } = contentType;
@@ -15,23 +16,27 @@ export default ({ strapi }: Context) => ({
         const params = pickCreateArgs(args);
 
         // todo[v4]: Sanitize args to only keep params / data / files (or do it in the base resolver)
-        return strapi.entityService!.create(uid, params);
+        return strapi.documents!(uid).create(params);
       },
 
       async update(parent: any, args: any) {
-        const { id, data } = args;
-        return strapi.entityService!.update(uid, id, { data });
+        const { documentId, data } = args;
+
+        return strapi.documents!(uid).update(documentId, { data });
       },
 
       async delete(parent: any, args: any, ctx: any) {
-        const { id, ...rest } = args;
+        const { documentId, ...rest } = args;
+
         await validate.contentAPI.query(rest, contentType, {
           auth: ctx?.state?.auth,
         });
+
         const sanitizedQuery = await sanitize.contentAPI.query(rest, contentType, {
           auth: ctx?.state?.auth,
         });
-        return strapi.entityService!.delete(uid, id, sanitizedQuery);
+
+        return strapi.documents!(uid).delete(documentId, sanitizedQuery);
       },
     };
   },

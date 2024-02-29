@@ -1,3 +1,4 @@
+import { nonNull, idArg } from 'nexus';
 import { entries, mapValues, omit } from 'lodash/fp';
 import { pagination } from '@strapi/utils';
 import type { Strapi, Schema } from '@strapi/types';
@@ -37,26 +38,25 @@ export default ({ strapi }: { strapi: Strapi }) => {
       // Collection Types
       if (kind === 'collectionType') {
         if (!multiple) {
-          return { id: 'ID' };
+          return {
+            documentId: nonNull(idArg()),
+            status: args.PublicationStatusArg,
+          };
         }
 
-        const params = {
+        return {
           filters: naming.getFiltersInputTypeName(contentType),
           pagination: args.PaginationArg,
           sort: args.SortArg,
-          publicationState: args.PublicationStateArg,
+          status: args.PublicationStatusArg,
         };
-
-        return params;
       }
 
       // Single Types
       if (kind === 'singleType') {
-        const params = {
-          publicationState: args.PublicationStateArg,
+        return {
+          status: args.PublicationStatusArg,
         };
-
-        return params;
       }
     },
 

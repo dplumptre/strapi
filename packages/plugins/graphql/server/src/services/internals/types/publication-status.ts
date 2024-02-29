@@ -3,21 +3,21 @@ import { enumType } from 'nexus';
 import type { Context } from '../../types';
 
 export default ({ strapi }: Context) => {
-  const { PUBLICATION_STATE_TYPE_NAME } = strapi.plugin('graphql').service('constants');
+  const { PUBLICATION_STATUS_TYPE_NAME } = strapi.plugin('graphql').service('constants');
 
   return {
     /**
      * An enum type definition representing a publication state
      * @type {NexusEnumTypeDef}
      */
-    PublicationState: enumType({
-      name: PUBLICATION_STATE_TYPE_NAME,
+    PublicationStatus: enumType({
+      name: PUBLICATION_STATUS_TYPE_NAME,
 
       members: {
         // Published only
-        LIVE: 'live',
+        DRAFT: 'draft',
         // Published & draft
-        PREVIEW: 'preview',
+        PUBLISHED: 'published',
       },
     }),
   };

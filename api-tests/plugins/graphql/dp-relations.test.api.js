@@ -92,10 +92,8 @@ describe('Test Graphql Relations with Draft and Publish enabled', () => {
           {
             labels {
               data {
-                id
-                attributes {
-                  name
-                }
+                documentId
+                name
               }
             }
           }
@@ -121,19 +119,13 @@ describe('Test Graphql Relations with Draft and Publish enabled', () => {
       const res = await graphqlQuery({
         query: /* GraphQL */ `
           {
-            documents(publicationState: PREVIEW) {
+            documents(status: DRAFT) {
               data {
-                id
-                attributes {
+                documentId
+                name
+                labels {
+                  documentId
                   name
-                  labels {
-                    data {
-                      id
-                      attributes {
-                        name
-                      }
-                    }
-                  }
                 }
               }
             }
@@ -159,20 +151,18 @@ describe('Test Graphql Relations with Draft and Publish enabled', () => {
     test('Publish document', async () => {
       const res = await graphqlQuery({
         query: /* GraphQL */ `
-          mutation publishDocument($id: ID!, $data: DocumentInput!) {
-            updateDocument(id: $id, data: $data) {
+          mutation publishDocument($documentId: ID!, $data: DocumentInput!) {
+            updateDocument(documentId: $documentId, data: $data) {
               data {
-                id
-                attributes {
-                  name
-                  publishedAt
-                }
+                documentId
+                name
+                publishedAt
               }
             }
           }
         `,
         variables: {
-          id: data.documents[0].id,
+          documentId: data.documents[0].documentId,
           data: {
             publishedAt: new Date().toISOString(),
           },
@@ -186,11 +176,9 @@ describe('Test Graphql Relations with Draft and Publish enabled', () => {
         data: {
           updateDocument: {
             data: {
-              id: data.documents[0].id,
-              attributes: {
-                name: data.documents[0].attributes.name,
-                publishedAt: expect.any(String),
-              },
+              documentId: data.documents[0].documentId,
+              name: data.documents[0].attributes.name,
+              publishedAt: expect.any(String),
             },
           },
         },
@@ -203,18 +191,12 @@ describe('Test Graphql Relations with Draft and Publish enabled', () => {
           {
             labels {
               data {
-                id
-                attributes {
+                documentId
+                name
+                documents {
+                  documentId
                   name
-                  documents {
-                    data {
-                      id
-                      attributes {
-                        name
-                        publishedAt
-                      }
-                    }
-                  }
+                  publishedAt
                 }
               }
             }
@@ -230,22 +212,16 @@ describe('Test Graphql Relations with Draft and Publish enabled', () => {
           labels: {
             data: expect.arrayContaining(
               data.labels.map((label) => ({
-                id: label.id,
-                attributes: {
-                  ...label.attributes,
-                  documents: {
-                    data: expect.arrayContaining(
-                      // Only the first document is published
-                      data.documents.slice(0, 1).map((document) => ({
-                        id: document.id,
-                        attributes: {
-                          ...selectFields(document.attributes),
-                          publishedAt: expect.any(String),
-                        },
-                      }))
-                    ),
-                  },
-                },
+                documentId: label.documentId,
+                ...label,
+                documents: expect.arrayContaining(
+                  // Only the first document is published
+                  data.documents.slice(0, 1).map((document) => ({
+                    documentId: document.documentId,
+                    ...selectFields(document),
+                    publishedAt: expect.any(String),
+                  }))
+                ),
               }))
             ),
           },
@@ -259,17 +235,11 @@ describe('Test Graphql Relations with Draft and Publish enabled', () => {
           {
             labels {
               data {
-                id
-                attributes {
+                documentId
+                name
+                documents(status: DRAFT) {
+                  documentId
                   name
-                  documents(publicationState: PREVIEW) {
-                    data {
-                      id
-                      attributes {
-                        name
-                      }
-                    }
-                  }
                 }
               }
             }
@@ -285,19 +255,14 @@ describe('Test Graphql Relations with Draft and Publish enabled', () => {
           labels: {
             data: expect.arrayContaining(
               data.labels.map((label) => ({
-                id: label.id,
-                attributes: {
-                  ...label.attributes,
-                  documents: {
-                    data: expect.arrayContaining(
-                      // All documents should be returned, even if they are not published
-                      data.documents.map((document) => ({
-                        id: document.id,
-                        attributes: selectFields(document.attributes),
-                      }))
-                    ),
-                  },
-                },
+                ...label,
+                documents: expect.arrayContaining(
+                  // All documents should be returned, even if they are not published
+                  data.documents.map((document) => ({
+                    id: document.id,
+                    ...selectFields(document),
+                  }))
+                ),
               }))
             ),
           },

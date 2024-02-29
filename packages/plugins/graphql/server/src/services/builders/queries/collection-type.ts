@@ -109,12 +109,12 @@ export default ({ strapi }: Context) => {
       async resolve(parent, args, ctx) {
         const transformedArgs = transformArgs(args, { contentType, usePagination: true });
 
-        const { find } = getService('builders')
+        const { findMany } = getService('builders')
           .get('content-api')
           .buildQueriesResolvers({ contentType });
 
         // queryResolvers will sanitize params
-        const nodes = await find(parent, transformedArgs, ctx);
+        const nodes = await findMany(parent, transformedArgs, ctx);
 
         return toEntityResponseCollection(nodes, { args: transformedArgs, resourceUID: uid });
       },

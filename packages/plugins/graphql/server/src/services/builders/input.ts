@@ -42,11 +42,6 @@ export default ({ strapi }: Context) => {
             return isWritableAttribute(contentType, attributeName) && isFieldEnabled(attributeName);
           });
 
-          // Add the ID for the component to enable inplace updates
-          if (modelType === 'component' && isFieldEnabled('id')) {
-            t.id('id');
-          }
-
           validAttributes.forEach(([attributeName, attribute]: [string, any]) => {
             // Enums
             if (isEnumeration(attribute)) {

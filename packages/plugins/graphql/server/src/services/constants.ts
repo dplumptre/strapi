@@ -1,5 +1,5 @@
 const PAGINATION_TYPE_NAME = 'Pagination';
-const PUBLICATION_STATE_TYPE_NAME = 'PublicationState';
+const PUBLICATION_STATUS_TYPE_NAME = 'PublicationStatus';
 const ERROR_TYPE_NAME = 'Error';
 
 const RESPONSE_COLLECTION_META_TYPE_NAME = 'ResponseCollectionMeta';
@@ -66,10 +66,8 @@ const KINDS = {
   component: 'component',
   dynamicZone: 'dynamic-zone',
   enum: 'enum',
-  entity: 'entity',
   entityResponse: 'entity-response',
   entityResponseCollection: 'entity-response-collection',
-  relationResponseCollection: 'relation-response-collection',
   query: 'query',
   mutation: 'mutation',
   input: 'input',
@@ -153,7 +151,7 @@ export type Constants = {
 export default () => ({
   PAGINATION_TYPE_NAME,
   RESPONSE_COLLECTION_META_TYPE_NAME,
-  PUBLICATION_STATE_TYPE_NAME,
+  PUBLICATION_STATUS_TYPE_NAME,
   GRAPHQL_SCALARS,
   STRAPI_SCALARS,
   GENERIC_MORPH_TYPENAME,

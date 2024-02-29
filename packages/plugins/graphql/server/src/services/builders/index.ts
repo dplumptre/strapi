@@ -5,12 +5,9 @@ import type { Strapi } from '@strapi/types';
 
 import enums from './enums';
 import dynamicZone from './dynamic-zones';
-import entity from './entity';
-import entityMeta from './entity-meta';
 import typeBuilder from './type';
 import response from './response';
 import responseCollection from './response-collection';
-import relationResponseCollection from './relation-response-collection';
 import queries from './queries';
 import mutations from './mutations';
 import filters from './filters';
@@ -27,12 +24,9 @@ import type { TypeRegistry } from '../type-registry';
 const buildersFactories = [
   enums,
   dynamicZone,
-  entity,
-  entityMeta,
   typeBuilder,
   response,
   responseCollection,
-  relationResponseCollection,
   queries,
   mutations,
   filters,

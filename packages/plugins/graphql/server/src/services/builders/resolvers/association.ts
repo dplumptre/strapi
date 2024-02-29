@@ -11,7 +11,6 @@ export default ({ strapi }: Context) => {
 
   const { isMorphRelation, isMedia } = getGraphQLService('utils').attributes;
   const { transformArgs } = getGraphQLService('builders').utils;
-  const { toEntityResponse, toEntityResponseCollection } = getGraphQLService('format').returnTypes;
 
   return {
     buildAssociationResolver({
@@ -34,7 +33,6 @@ export default ({ strapi }: Context) => {
       const isMorphAttribute = isMorphRelation(attribute);
 
       const targetUID = isMediaAttribute ? 'plugin::upload.file' : attribute.target;
-      const isToMany = isMediaAttribute ? attribute.multiple : attribute.relation.endsWith('Many');
 
       const targetContentType = strapi.getModel(targetUID);
 
@@ -60,11 +58,6 @@ export default ({ strapi }: Context) => {
           sanitizedQuery
         );
 
-        const info = {
-          args: sanitizedQuery,
-          resourceUID: targetUID,
-        };
-
         // If this a polymorphic association, it sanitizes & returns the raw data
         // Note: The value needs to be wrapped in a fake object that represents its parent
         // so that the sanitize util can work properly.
@@ -82,15 +75,7 @@ export default ({ strapi }: Context) => {
           return sanitizeMorphAttribute(data);
         }
 
-        // If this is a to-many relation, it returns an object that
-        // matches what the entity-response-collection's resolvers expect
-        if (isToMany) {
-          return toEntityResponseCollection(data, info);
-        }
-
-        // Else, it returns an object that matches
-        // what the entity-response's resolvers expect
-        return toEntityResponse(data, info);
+        return data;
       };
     },
   };

@@ -1,5 +1,5 @@
 import { isArray, isString, isUndefined, constant } from 'lodash/fp';
-import { objectType } from 'nexus';
+import { objectType, list } from 'nexus';
 import { contentTypes } from '@strapi/utils';
 import type { Schema } from '@strapi/types';
 
@@ -44,17 +44,11 @@ export default (context: Context) => {
   const addComponentAttribute = (options: TypeBuildersOptions) => {
     const { builder, attributeName, contentType, attribute } = options;
 
-    let localBuilder = builder;
-
     const { naming } = getGraphQLService('utils');
     const { getContentTypeArgs } = getGraphQLService('builders').utils;
     const { buildComponentResolver } = getGraphQLService('builders').get('content-api');
 
     const type = naming.getComponentNameFromAttribute(attribute);
-
-    if (attribute.repeatable) {
-      localBuilder = localBuilder.list;
-    }
 
     const targetComponent = strapi.getModel(attribute.component);
 
@@ -66,7 +60,11 @@ export default (context: Context) => {
 
     const args = getContentTypeArgs(targetComponent, { multiple: !!attribute.repeatable });
 
-    localBuilder.field(attributeName, { type, resolve, args });
+    if (attribute.repeatable) {
+      builder.list.field(attributeName, { type, resolve, args });
+    } else {
+      builder.field(attributeName, { type, resolve, args });
+    }
   };
 
   /**
@@ -144,11 +142,12 @@ export default (context: Context) => {
     });
 
     const args = attribute.multiple ? getContentTypeArgs(fileContentType) : undefined;
-    const type = attribute.multiple
-      ? naming.getRelationResponseCollectionName(fileContentType)
-      : naming.getEntityResponseName(fileContentType);
+    const type = naming.getTypeName(fileContentType);
+    // attribute.multiple
+    //   ? naming.getRelationResponseCollectionName(fileContentType)
+    //   : naming.getTypeName(fileContentType);
 
-    builder.field(attributeName, { type, resolve, args });
+    builder.field(attributeName, { type: attribute.multiple ? list(type) : type, resolve, args });
   };
 
   /**
@@ -219,9 +218,10 @@ export default (context: Context) => {
 
     const targetContentType = strapi.getModel(attribute.target);
 
-    const type = isToManyRelation
-      ? naming.getRelationResponseCollectionName(targetContentType)
-      : naming.getEntityResponseName(targetContentType);
+    const type = naming.getTypeName(targetContentType);
+    // isToManyRelation
+    //   ? naming.getRelationResponseCollectionName(targetContentType)
+    //   : naming.getTypeName(targetContentType);
 
     const args = isToManyRelation ? getContentTypeArgs(targetContentType) : undefined;
 
@@ -230,7 +230,11 @@ export default (context: Context) => {
 
     extension.use({ resolversConfig: { [resolverPath]: { auth: { scope: [resolverScope] } } } });
 
-    builder.field(attributeName, { type, resolve, args });
+    builder.field(attributeName, {
+      type: isToManyRelation ? list(type) : type,
+      resolve,
+      args,
+    });
   };
 
   const isNotPrivate = (contentType: Schema.Any) => (attributeName: string) => {
@@ -274,8 +278,8 @@ export default (context: Context) => {
         name,
 
         definition(t) {
-          if (modelType === 'component' && isNotDisabled(contentType)('id')) {
-            t.nonNull.id('id');
+          if (modelType !== 'component' && isNotDisabled(contentType)('documentId')) {
+            t.nonNull.id('documentId');
           }
 
           /** Attributes

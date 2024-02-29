@@ -3,7 +3,7 @@ import type { Schema } from '@strapi/types';
 import type { Context } from '../../types';
 
 // todo[v4]: Find a way to get that dynamically
-const virtualScalarAttributes = ['id'];
+const virtualScalarAttributes = ['documentId'];
 
 export default ({ strapi }: Context) => {
   const { service: getService } = strapi.plugin('graphql');

@@ -55,13 +55,6 @@ export default ({ strapi }: Context) => {
   };
 
   /**
-   * Build the entity meta type name for a given content type
-   */
-  const getEntityMetaName = (contentType: Schema.Any) => {
-    return `${getEntityName(contentType)}Meta`;
-  };
-
-  /**
    * Build the entity response's type name for a given content type
    */
   const getEntityResponseName = (contentType: Schema.Any) => {
@@ -73,13 +66,6 @@ export default ({ strapi }: Context) => {
    */
   const getEntityResponseCollectionName = (contentType: Schema.Any) => {
     return `${getEntityName(contentType)}ResponseCollection`;
-  };
-
-  /**
-   * Build the relation response collection's type name for a given content type
-   */
-  const getRelationResponseCollectionName = (contentType: Schema.Any) => {
-    return `${getTypeName(contentType)}RelationResponseCollection`;
   };
 
   /**
@@ -228,10 +214,8 @@ export default ({ strapi }: Context) => {
     getEnumName,
     getTypeName,
     getEntityName,
-    getEntityMetaName,
     getEntityResponseName,
     getEntityResponseCollectionName,
-    getRelationResponseCollectionName,
     getComponentName,
     getComponentNameFromAttribute,
     getDynamicZoneName,

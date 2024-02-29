@@ -59,12 +59,11 @@ export default ({ strapi }: Context) => {
       async resolve(parent, args, ctx) {
         const transformedArgs = transformArgs(args, { contentType });
 
-        const queriesResolvers = getService('builders')
+        const { findFirst } = getService('builders')
           .get('content-api')
           .buildQueriesResolvers({ contentType });
 
-        // queryResolvers will sanitize params
-        const value = queriesResolvers.find(parent, transformedArgs, ctx);
+        const value = await findFirst(parent, transformedArgs, ctx);
 
         return toEntityResponse(value, { args: transformedArgs, resourceUID: uid });
       },

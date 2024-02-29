@@ -70,14 +70,14 @@ export default ({ strapi }: Context) => {
           }
         );
 
-        const entity = (await strapi.entityService!.findMany(uid, sanitizedQuery)) as any;
+        const document = await strapi.documents!(uid).findFirst(sanitizedQuery);
 
         // Create or update
-        const value = isNil(entity)
+        const query = isNil(document)
           ? create(parent, transformedArgs)
-          : update(uid, { id: entity.id, data: transformedArgs.data });
+          : update(uid, { documentId: document.documentId, data: transformedArgs.data });
 
-        return toEntityResponse(value, { args: transformedArgs, resourceUID: uid });
+        return toEntityResponse(await query, { args: transformedArgs, resourceUID: uid });
       },
     });
   };
@@ -112,13 +112,16 @@ export default ({ strapi }: Context) => {
           auth: ctx?.state?.auth,
         });
 
-        const entity = (await strapi.entityService!.findMany(uid, sanitizedQuery)) as any;
+        const document = await strapi.documents!(uid).findFirst(sanitizedQuery);
 
-        if (!entity) {
+        if (!document) {
           throw new NotFoundError('Entity not found');
         }
 
-        const value = await deleteResolver(parent, { id: entity.id, params: transformedArgs });
+        const value = await deleteResolver(parent, {
+          documentId: document.documentId,
+          params: transformedArgs,
+        });
 
         return toEntityResponse(value, { args: transformedArgs, resourceUID: uid });
       },

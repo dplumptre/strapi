@@ -69,18 +69,12 @@ export default ({ strapi }: Context) => {
     const updateMutationName = getUpdateMutationTypeName(contentType);
     const responseTypeName = getEntityResponseName(contentType);
 
-    // todo[v4]: Don't allow to filter using every unique attributes for now
-    // Only authorize filtering using unique scalar fields for updateOne queries
-    // const uniqueAttributes = getUniqueAttributesFiltersMap(attributes);
-
     t.field(updateMutationName, {
       type: responseTypeName,
 
       args: {
         // Query args
-        id: nonNull('ID'),
-        // todo[v4]: Don't allow to filter using every unique attributes for now
-        // ...uniqueAttributes,
+        documentId: nonNull('ID'),
 
         // Update payload
         data: nonNull(getContentTypeInputName(contentType)),
@@ -119,18 +113,12 @@ export default ({ strapi }: Context) => {
     const deleteMutationName = getDeleteMutationTypeName(contentType);
     const responseTypeName = getEntityResponseName(contentType);
 
-    // todo[v4]: Don't allow to filter using every unique attributes for now
-    // Only authorize filtering using unique scalar fields for updateOne queries
-    // const uniqueAttributes = getUniqueAttributesFiltersMap(attributes);
-
     t.field(deleteMutationName, {
       type: responseTypeName,
 
       args: {
         // Query args
-        id: nonNull('ID'),
-        // todo[v4]: Don't allow to filter using every unique attributes for now
-        // ...uniqueAttributes,
+        documentId: nonNull('ID'),
       },
 
       async resolve(parent, args, ctx) {

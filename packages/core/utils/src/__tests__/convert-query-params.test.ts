@@ -24,6 +24,7 @@ describe('convert-query-params', () => {
     // test filters that should be kept
     test.each<[string, object]>([
       ['id', { id: 1234 }],
+      ['documentId', { documentId: 'okaoinsiuaozbdaz' }],
       ['string', { title: 'Hello World' }],
       ['Date', { createdAt: new Date() }],
       ['$gt Date', { createdAt: { $gt: new Date() } }],

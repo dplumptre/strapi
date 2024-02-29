@@ -25,13 +25,13 @@ export default ({ strapi }: Context) => {
             const { start, limit } = args;
             const safeLimit = Math.max(limit, 1);
             const contentType = strapi.getModel(resourceUID);
-            await validate.contentAPI.query(args, contentType, {
-              auth: ctx?.state?.auth,
-            });
-            const sanitizedQuery = await sanitize.contentAPI.query(args, contentType, {
-              auth: ctx?.state?.auth,
-            });
-            const total = await strapi.entityService!.count(resourceUID, sanitizedQuery);
+            const { auth } = ctx?.state ?? {};
+
+            await validate.contentAPI.query(args, contentType, { auth });
+            const sanitizedQuery = await sanitize.contentAPI.query(args, contentType, { auth });
+
+            const total = await strapi.documents!(resourceUID).count(sanitizedQuery);
+
             const pageSize = limit === -1 ? total - start : safeLimit;
             const pageCount = limit === -1 ? safeLimit : Math.ceil(total / safeLimit);
             const page = limit === -1 ? safeLimit : Math.floor(start / safeLimit) + 1;
