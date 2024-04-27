@@ -1,0 +1,24 @@
+{
+  "kind": "singleType",
+  "collectionName": "humans",
+  "info": {
+    "singularName": "human",
+    "pluralName": "humans",
+    "displayName": "human",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string"
+    },
+    "addresses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::address.address"
+    }
+  }
+}
